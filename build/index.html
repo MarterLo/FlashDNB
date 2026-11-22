@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cap sur le Brevet - Révisions</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            color: #1e293b;
+            margin: 0;
+            padding: 1rem;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #f59e0b 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .conteneur {
+            width: 100%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.96);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid #d97706;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 { color: #b91c1c; margin: 0; font-size: 1.4rem; }
+
+        .vue { display: none; }
+        .vue.active { display: block; }
+
+        .grille {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+        }
+
+        .vignette {
+            background: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 1.25rem 0.75rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e293b;
+        }
+
+        .vignette:active {
+            background-color: #fef3c7;
+            border-color: #d97706;
+            color: #b91c1c;
+        }
+
+        .btn-retour {
+            background: none;
+            border: none;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .compteur { text-align: center; font-size: 0.85rem; color: #64748b; margin-bottom: 0.75rem; }
+
+        .carte {
+            background: #f8fafc;
+            border: 2px solid #d97706;
+            border-radius: 12px;
+            padding: 2.5rem 1.25rem;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .type-face {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d97706;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .texte-carte { font-size: 1.15rem; font-weight: 600; color: #1e293b; }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        button.nav {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        button.nav.sec { background-color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="conteneur">
+    <!-- VUE 1 : ACCUEIL -->
+    <div id="vue-accueil" class="vue active">
+        <header><h1>Créé et propulsé par R1, le GOAT !</h1></header>
+        <p style="text-align:center; margin-top:0;">Choisis ta matière :</p>
+        <div class="grille">
+            <div class="vignette" onclick="ouvrirVue('vue-hg')">Histoire-Géo</div>
+            <div class="vignette" onclick="alerterDispo('Mathématiques')">Mathématiques</div>
+            <div class="vignette" onclick="alerterDispo('Français')">Français</div>
+            <div class="vignette" onclick="alerterDispo('Sciences')">Sciences</div>
+        </div>
+    </div>
+
+    <!-- VUE 2 : SOUS-MENU HG -->
+    <div id="vue-hg" class="vue">
+        <button class="btn-retour" onclick="ouvrirVue('vue-accueil')">&larr; Retour</button>
+        <header><h1>Histoire - Géographie</h1></header>
+        <p style="text-align:center; margin-top:0;">Choisis ton thème :</p>
+        <div class="grille" style="grid-template-columns: 1fr;">
+            <div class="vignette" onclick="lancerQuiz('ww1', '1ère Guerre mondiale (1914-1918)')">1ère Guerre mondiale (1914-1918)</div>
+            <div class="vignette" onclick="lancerQuiz('entredeux', 'Entre-deux-guerres (1919-1939)')">Entre-deux-guerres (1919-1939)</div>
+            <div class="vignette" onclick="lancerQuiz('ww2', 'Seconde Guerre mondiale (1939-1945)')">Seconde Guerre mondiale (1939-1945)</div>
+        </div>
+    </div>
+
+    <!-- VUE 3 : LECTEUR FLASHCARDS -->
+    <div id="vue-quiz" class="vue">
+        <button class="btn-retour" onclick="ouvrirVue('vue-hg')">&larr; Retour aux thèmes</button>
+        <header><h1 id="titre-quiz">Thème</h1></header>
+        
+        <div class="compteur" id="compteur">Carte 1 / 10</div>
+        
+        <div class="carte" onclick="retournerCarte()">
+            <div class="type-face" id="face-label">Question (touche pour voir la réponse)</div>
+            <div class="texte-carte" id="carte-texte">...</div>
+        </div>
+
+        <div class="actions">
+            <button class="nav sec" onclick="changerCarte(-1)">&larr; Précédente</button>
+            <button class="nav" onclick="retournerCarte()">Retourner</button>
+            <button class="nav" onclick="changerCarte(1)">Suivante &rarr;</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const donnees = {
+        ww1: [
+            { q: "Date de début de la Première Guerre mondiale", r: "28 juillet 1914" },
+            { q: "Date de fin de la Première Guerre mondiale", r: "11 novembre 1918" },
+            { q: "Déclencheur de la guerre", r: "L'assassinat de l'archiduc François-Ferdinand à Sarajevo" },
+            { q: "Triple-Entente", r: "Alliance militaire regroupant la France, le Royaume-Uni et l'Empire russe." },
+            { q: "Empires centraux", r: "Allemagne, Autriche-Hongrie et Italie (puis l'Empire ottoman)." },
+            { q: "Guerre de mouvement", r: "Phase offensive de 1914 avec des déplacements rapides des armées." },
+            { q: "Guerre de position (tranchées)", r: "Phase de stabilisation (1915-1917) où les soldats s'enterrent." },
+            { q: "Bataille de Verdun", r: "1916 : Plus de 300 000 morts pour un gain territorial nul." },
+            { q: "Guerre totale", r: "Mobilisation totale (économique, militaire, psychologique et humaine)." },
+            { q: "Rôle des femmes", r: "Elles remplacent les hommes dans les usines et les champs ('munitionnettes')." },
+            { q: "Emprunts de guerre", r: "Appels de l'État aux épargnes des civils pour financer les combats." },
+            { q: "Censure et propagande", r: "Contrôle de l'information et manipulation de l'opinion publique." },
+            { q: "Génocide arménien", r: "Extermination planifiée des Arméniens par l'Empire ottoman (1915-1916)." },
+            { q: "Révolution russe", r: "Renversement du pouvoir en 1917 par les bolcheviques (Lénine)." },
+            { q: "Entrée en guerre des États-Unis", r: "Avril 1917 (soutien massif en troupes et matériel)." },
+            { q: "Traité de Versailles", r: "28 juin 1919 : l'Allemagne est jugée seule responsable et lourdement sanctionnée." },
+            { q: "Gueules cassées", r: "Surnom des soldats survivants ayant subi de graves mutilations faciales." },
+            { q: "Poilus", r: "Surnom affectueux donné aux soldats français." },
+            { q: "Mutineries de 1917", r: "Refus d'obéissance des soldats après l'échec du Chemin des Dames." },
+            { q: "Société des Nations (SDN)", r: "Organisation internationale créée en 1920 pour maintenir la paix." }
+        ],
+        entredeux: [
+            { q: "Crise de 1929", r: "Krach boursier de Wall Street (New York) déclenchant une grave crise mondiale." },
+            { q: "Arrivée d'Hitler au pouvoir", r: "Nommé chancelier le 30 janvier 1933 en Allemagne." },
+            { q: "Staline en URSS", r: "Dirigeant instaurant une dictature totalitaire et communiste." },
+            { q: "Mussolini en Italie", r: "Instaure le premier régime fasciste après la marche sur Rome en 1922." },
+            { q: "Le Front populaire en France", r: "Alliance de gauche remportant les élections de 1936." },
+            { q: "Mesures du Front populaire", r: "Accords de Matignon : 2 semaines de congés payés, semaine de 40h." },
+            { q: "Léon Blum", r: "Président du Conseil socialiste dirigeant le Front populaire." },
+            { q: "Goulag", r: "Système de camps de travail forcé en URSS." },
+            { q: "Lois de Nuremberg (1935)", r: "Lois antisémites privant les Juifs allemands de leurs droits." },
+            { q: "La Nuit de cristal (novembre 1938)", r: "Vaste pogrom antisémite organisé par les nazis." },
+            { q: "L'Anschluss (mars 1938)", r: "Rattachement de l'Autriche à l'Allemagne nazie." },
+            { q: "Accords de Munich (septembre 1938)", r: "Autorisent l'Allemagne à annexer les Sudètes (Tchécoslovaquie)." },
+            { q: "Pacte germano-soviétique", r: "Traité de non-agression signé en août 1939 entre l'Allemagne et l'URSS." }
+        ],
+        ww2: [
+            { q: "Date de début de la Seconde Guerre mondiale", r: "1er septembre 1939 (Invasion de la Pologne)." },
+            { q: "Date de fin de la Seconde Guerre mondiale", r: "2 septembre 1945 (Capitulation du Japon)." },
+            { q: "Les forces de l'Axe", r: "Allemagne, Italie, Japon." },
+            { q: "Les Alliés", r: "Royaume-Uni, URSS, États-Unis, France libre." },
+            { q: "L'appel du 18 juin 1940", r: "Appel à la résistance lancé par de Gaulle depuis Londres." },
+            { q: "Le régime de Vichy", r: "Régime dirigé par le maréchal Pétain instaurant la collaboration." },
+            { q: "La Révolution nationale", r: "Idéologie de Vichy : 'Travail, Famille, Patrie'." },
+            { q: "Jean Moulin", r: "Unificateur de la Résistance intérieure (CNR)." },
+            { q: "La Shoah", r: "Extermination systématique d'environ 6 millions de Juifs par les nazis." },
+            { q: "Camps d'extermination", r: "Camps voués à l'élimination massive (ex. Auschwitz-Birkenau)." },
+            { q: "Débarquement de Normandie", r: "6 juin 1944 (Opération Overlord)." },
+            { q: "Bataille de Stalingrad (1942-1943)", r: "Tournant majeur et défaite allemande face à l'URSS." },
+            { q: "Bombes atomiques", r: "Août 1945 sur Hiroshima et Nagasaki." },
+            { q: "Création de l'ONU", r: "Octobre 1945 pour garantir la paix mondiale." }
+        ]
+    };
+
+    let cartesActuelles = [];
+    let index = 0;
+    let estRetournee = false;
+
+    function ouvrirVue(idVue) {
+        document.querySelectorAll('.vue').forEach(v => v.classList.remove('active'));
+        document.getElementById(idVue).classList.add('active');
+    }
+
+    function lancerQuiz(cleTheme, titre) {
+        cartesActuelles = donnees[cleTheme];
+        index = 0;
+        estRetournee = false;
+        document.getElementById('titre-quiz').innerText = titre;
+        majCarte();
+        ouvrirVue('vue-quiz');
+    }
+
+    function majCarte() {
+        const c = cartesActuelles[index];
+        document.getElementById('compteur').innerText = `Carte ${index + 1} / ${cartesActuelles.length}`;
+        document.getElementById('face-label').innerText = estRetournee ? "Réponse" : "Question (touche pour retourner)";
+        document.getElementById('carte-texte').innerText = estRetournee ? c.r : c.q;
+    }
+
+    function retournerCarte() {
+        estRetournee = !estRetournee;
+        majCarte();
+    }
+
+    function changerCarte(direction) {
+        index = (index + direction + cartesActuelles.length) % cartesActuelles.length;
+        estRetournee = false;
+        majCarte();
+    }
+
+    function alerterDispo(matiere) {
+        alert("Le module " + matiere + " sera bientôt disponible !");
+    }
+</script>
+
+</body>
+</html>
